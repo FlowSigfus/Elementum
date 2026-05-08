@@ -1,0 +1,41 @@
+{% extends 'base_game.html' %}
+{% block content %}
+<h1>Оформление заказа</h1>
+<form method="post">
+    <div><label>ФИО:</label><input type="text" name="fullname" required></div>
+    <div><label>Email (для чека):</label><input type="email" name="email" required></div>
+    <div><label>Телефон:</label><input type="tel" name="phone"></div>
+
+    {% if has_physical %}
+    <div>
+        <label>Способ доставки:</label>
+        <select name="delivery_method" id="delivery_method" required>
+            <option value="pickup">Самовывоз (бесплатно)</option>
+            <option value="pochta">Почта России (200 руб.)</option>
+            <option value="cdek">СДЭК (350 руб.)</option>
+        </select>
+    </div>
+    <div id="address_field"><label>Адрес доставки:</label><textarea name="delivery_address" rows="3"></textarea></div>
+    {% endif %}
+
+    <div>
+        <label><input type="checkbox" name="agree_offer" required> Я принимаю условия <a href="/offer" target="_blank">оферты</a></label>
+    </div>
+    <div>
+        <label><input type="checkbox" name="agree_privacy" required> Согласен с <a href="/privacy" target="_blank">политикой конфиденциальности</a></label>
+    </div>
+    <button type="submit" class="btn">Перейти к оплате</button>
+</form>
+
+<script>
+    {% if has_physical %}
+    const deliverySelect = document.getElementById('delivery_method');
+    const addressField = document.getElementById('address_field');
+    function toggleAddress() {
+        addressField.style.display = deliverySelect.value === 'pickup' ? 'none' : 'block';
+    }
+    deliverySelect.addEventListener('change', toggleAddress);
+    toggleAddress();
+    {% endif %}
+</script>
+{% endblock %}

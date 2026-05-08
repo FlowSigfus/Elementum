@@ -1,0 +1,13 @@
+{% extends 'base_private.html' %}
+{% block content %}
+<div style="text-align: center;">
+    <h1>NFC-сканер</h1>
+    <button id="scanButton" class="btn">Сканировать метку</button>
+    <p id="result"></p>
+</div>
+<script src="{{ url_for('static', filename='nfc.js') }}"></script>
+<div style="text-align: center; margin-top: 30px;">
+    <a href="/dashboard" class="btn"><i class="fas fa-home"></i> На главную</a>
+    <a href="/profile" class="btn"><i class="fas fa-user"></i> Профиль</a>
+</div>
+{% endblock %}

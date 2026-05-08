@@ -1,0 +1,10 @@
+{% extends 'base_game.html' %}
+
+{% block content %}
+<h1>Оплата заказа №{{ order.id }}</h1>
+<p>Сумма к оплате: <strong>{{ amount }} руб.</strong></p>
+<p>Вы будете перенаправлены на страницу оплаты ЮKassa.</p>
+<form method="post" action="{{ url_for('shop.init_payment', order_id=order.id) }}">
+    <button type="submit" class="btn">Оплатить</button>
+</form>
+{% endblock %}

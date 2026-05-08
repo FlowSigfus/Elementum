@@ -1,0 +1,41 @@
+{% extends 'base_game.html' %}
+
+{% block content %}
+<section class="hero">
+    <h1>Элементум – карточная игра со стихиями и NFC</h1>
+    <p>Собирайте карты, сражайтесь в сюжете и PvP, используйте реальные NFC-метки для получения артефактов!</p>
+    <div class="hero-buttons">
+        <a href="/register" class="btn">Начать игру</a>
+        <a href="/how-to-play" class="btn">Как играть</a>
+    </div>
+</section>
+
+<section class="features">
+    <div class="feature-card">
+        <i class="fas fa-dice-d6"></i>
+        <h3>Пошаговые бои</h3>
+        <p>Используйте карты атаки, защиты, лечения и пропуска хода, чтобы победить врага.</p>
+    </div>
+    <div class="feature-card">
+        <i class="fas fa-fire"></i>
+        <h3>Преимущество стихий</h3>
+        <p>Вода сильнее огня, огонь сильнее земли… Подбирайте тактику!</p>
+    </div>
+    <div class="feature-card">
+        <i class="fas fa-microchip"></i>
+        <h3>NFC-артефакты</h3>
+        <p>Сканируйте реальные метки, чтобы получить карты или усиление в бою.</p>
+    </div>
+    <div class="feature-card">
+        <i class="fas fa-trophy"></i>
+        <h3>PvP и рейтинг</h3>
+        <p>Сражайтесь с другими игроками, поднимайтесь в таблице лидеров.</p>
+    </div>
+</section>
+
+<section class="cta">
+    <h2>Присоединяйтесь к битве стихий!</h2>
+    <p>Регистрация бесплатна, стартовый набор карт уже ждёт.</p>
+    <a href="/register" class="btn btn-large">Зарегистрироваться</a>
+</section>
+{% endblock %}

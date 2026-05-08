@@ -1,0 +1,26 @@
+{% extends 'base_private.html' %}
+
+{% block content %}
+<h2>📜 Мои карты</h2>
+<div class="card-grid">
+    {% for card in cards %}
+    <div class="card-item" onclick='showCardInfo({
+        name: "{{ card.name }}",
+        image: "{{ url_for('static', filename='cards/' + card.name + '.jpeg') }}",
+        rarity: "{{ card.rarity }}",
+        element: "{{ card.element }}",
+        actionType: "{{ card.action_type }}",
+        value: {{ card.base_value }},
+        description: "{{ card.description }}"
+    })'>
+        <img class="card-img" src="{{ url_for('static', filename='cards/' + card.name + '.jpeg') }}" alt="{{ card.name }}">
+        <div class="card-name">{{ card.name }}</div>
+        <div class="card-details">Кол-во: {{ card.quantity }} | Ур. {{ card.level }}</div>
+    </div>
+    {% endfor %}
+</div>
+<div style="text-align: center; margin-top: 30px;">
+    <a href="/dashboard" class="btn"><i class="fas fa-home"></i> На главную</a>
+    <a href="/profile" class="btn"><i class="fas fa-user"></i> Профиль</a>
+</div>
+{% endblock %}

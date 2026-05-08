@@ -1,0 +1,178 @@
+{% extends 'base_private.html' %}
+{% block content %}
+<div class="trade-container">
+    <h1>🔄 Торговля</h1>
+    <p>Ваши монеты: <strong>{{ user_coins }}</strong></p>
+
+    <!-- Кнопка раскрытия формы -->
+    <button id="toggleCreateForm" class="btn" style="margin-bottom: 15px;">➕ Создать предложение</button>
+
+    <!-- Сворачиваемая форма -->
+    <div id="createFormContainer" style="display: none;">
+        <form method="post" action="/trade/create">
+            <div class="trade-row">
+                <label>Я даю:</label>
+                <select name="give_type" id="give_type">
+                    <option value="card">Карту</option>
+                    <option value="coins">Монеты</option>
+                </select>
+                <span id="give_card_block">
+                    <select name="give_card_id">
+                        <option value="">Выберите карту</option>
+                        {% for card in my_cards %}
+                        <option value="{{ card.id }}">{{ card.name }} ({{ card.rarity }}) — {{ card.quantity }} шт.
+                        </option>
+                        {% endfor %}
+                    </select>
+                    <input type="number" name="give_qty" value="1" min="1" placeholder="Кол-во" style="width: 80px;">
+                </span>
+                <span id="give_coins_block" style="display: none;">
+                    <input type="number" name="give_coins" placeholder="Сумма" min="1" step="1" style="width: 100px;">
+                </span>
+            </div>
+            <div class="trade-row">
+                <label>Я хочу:</label>
+                <select name="want_type" id="want_type">
+                    <option value="card">Карту</option>
+                    <option value="coins">Монеты</option>
+                </select>
+                <span id="want_card_block">
+                    <select name="want_card_id">
+                        <option value="">Выберите карту</option>
+                        {% for card in all_cards %}
+                        <option value="{{ card.id }}">{{ card.name }} ({{ card.rarity }})</option>
+                        {% endfor %}
+                    </select>
+                    <input type="number" name="want_qty" value="1" min="1" placeholder="Кол-во" style="width: 80px;">
+                </span>
+                <span id="want_coins_block" style="display: none;">
+                    <input type="number" name="want_coins" placeholder="Сумма" min="1" step="1" style="width: 100px;">
+                </span>
+            </div>
+            <button type="submit" class="btn">✅ Опубликовать</button>
+        </form>
+    </div>
+
+    <!-- Фильтры -->
+    <div class="trade-filters">
+        <form method="get" action="/trade" style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px;">
+            <input type="text" name="search" placeholder="Поиск по имени или карте" value="{{ search }}"
+                style="flex: 1; min-width: 150px;">
+            <select name="sort" style="width: auto;">
+                <option value="newest" {% if sort_by=='newest' %}selected{% endif %}>Новые</option>
+                <option value="oldest" {% if sort_by=='oldest' %}selected{% endif %}>Старые</option>
+                <option value="give_card" {% if sort_by=='give_card' %}selected{% endif %}>По карте (даю)</option>
+                <option value="want_card" {% if sort_by=='want_card' %}selected{% endif %}>По карте (хочу)</option>
+                <option value="give_coins" {% if sort_by=='give_coins' %}selected{% endif %}>По монетам (даю)</option>
+                <option value="want_coins" {% if sort_by=='want_coins' %}selected{% endif %}>По монетам (хочу)</option>
+            </select>
+            <button type="submit" class="btn" style="white-space: nowrap;">🔍 Найти</button>
+        </form>
+    </div>
+
+    <h2>Активные предложения ({{ total_pages * 10 if total_pages else 0 }})</h2>
+    {% if offers %}
+    <div class="trade-offers">
+        {% for offer in offers %}
+        <div class="offer-item">
+            <div class="offer-header">
+                <strong>{{ offer.username }}</strong>
+                <span class="offer-date">{{ offer.created_at[:10] }}</span>
+            </div>
+            <div class="offer-body">
+                <div class="offer-give">
+                    <span class="label">Даёт:</span>
+                    {% if offer.give_type == 'card' %}
+                    <span class="value">{{ offer.give_name }} (x{{ offer.quantity }})</span>
+                    {% else %}
+                    <span class="value">{{ offer.give_coins }} монет</span>
+                    {% endif %}
+                </div>
+                <div class="offer-want">
+                    <span class="label">Хочет:</span>
+                    {% if offer.wanted_type == 'card' %}
+                    <span class="value">{{ offer.want_name }} (x{{ offer.wanted_quantity }})</span>
+                    {% else %}
+                    <span class="value">{{ offer.wanted_coins }} монет</span>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="offer-actions">
+                <a href="/trade/accept/{{ offer.id }}" class="btn">Принять</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="pagination">
+        {% if page > 1 %}
+        <a href="?page={{ page-1 }}&sort={{ sort_by }}&search={{ search }}">◀ Предыдущая</a>
+        {% endif %}
+        <span>Страница {{ page }} из {{ total_pages }}</span>
+        {% if page < total_pages %} <a href="?page={{ page+1 }}&sort={{ sort_by }}&search={{ search }}">Следующая ▶</a>
+            {% endif %}
+    </div>
+    {% else %}
+    <p>Нет активных предложений.</p>
+    {% endif %}
+</div>
+<div style="text-align: center; margin-top: 30px;">
+    <a href="/dashboard" class="btn"><i class="fas fa-home"></i> На главную</a>
+    <a href="/profile" class="btn"><i class="fas fa-user"></i> Профиль</a>
+</div>
+
+<script>
+    // Сворачивание/разворачивание формы
+    const toggleBtn = document.getElementById('toggleCreateForm');
+    const formContainer = document.getElementById('createFormContainer');
+    toggleBtn.addEventListener('click', () => {
+        if (formContainer.style.display === 'none') {
+            formContainer.style.display = 'block';
+            toggleBtn.textContent = '✖ Скрыть';
+        } else {
+            formContainer.style.display = 'none';
+            toggleBtn.textContent = '➕ Создать предложение';
+        }
+    });
+
+    // Динамическое переключение полей в зависимости от типа (карта/монеты)
+    function updateGiveBlock() {
+        const type = document.getElementById('give_type').value;
+        document.getElementById('give_card_block').style.display = (type === 'card') ? 'inline' : 'none';
+        document.getElementById('give_coins_block').style.display = (type === 'coins') ? 'inline' : 'none';
+    }
+    function updateWantBlock() {
+        const type = document.getElementById('want_type').value;
+        document.getElementById('want_card_block').style.display = (type === 'card') ? 'inline' : 'none';
+        document.getElementById('want_coins_block').style.display = (type === 'coins') ? 'inline' : 'none';
+    }
+    document.getElementById('give_type').addEventListener('change', updateGiveBlock);
+    document.getElementById('want_type').addEventListener('change', updateWantBlock);
+    // Инициализация при загрузке
+    updateGiveBlock();
+    updateWantBlock();
+</script>
+
+<style>
+    .trade-row {
+        margin: 12px 0;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .trade-row label {
+        font-weight: bold;
+        min-width: 80px;
+    }
+
+    .trade-filters form {
+        background: none;
+        border: none;
+        padding: 0;
+        margin: 20px 0;
+        max-width: 100%;
+    }
+</style>
+{% endblock %}

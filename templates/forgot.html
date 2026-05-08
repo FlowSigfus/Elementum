@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Восстановление пароля</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+    <header class="main-header">
+        <div class="header-profile">
+            <a href="/" class="profile-link">
+                <img class="header-avatar" src="{{ url_for('static', filename='avatars/default.png') }}" alt="logo">
+                <span class="header-username">Элементум</span>
+            </a>
+        </div>
+        <nav class="header-nav">
+            <a href="/login" class="nav-link">Вход</a>
+        </nav>
+    </header>
+
+    <div class="auth-form">
+        <h2>Восстановление пароля</h2>
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <ul class="flash-messages">
+            {% for msg in messages %}
+            <li>{{ msg }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        {% endwith %}
+        <form method="post">
+            <input type="email" name="email" placeholder="Ваш email" required>
+            <button type="submit">Отправить ссылку</button>
+        </form>
+        <p style="text-align: center;"><a href="/login">Назад</a></p>
+    </div>
+</body>
+
+</html>

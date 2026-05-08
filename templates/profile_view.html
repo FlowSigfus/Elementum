@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Профиль {{ user.username }}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <header class="main-header">
+        <div class="header-profile">
+            <a href="/dashboard" class="profile-link">
+                <img class="header-avatar" src="{{ url_for('static', filename='avatars/' + current_user.avatar) }}" alt="avatar">
+                <span class="header-username">{{ current_user.username }}</span>
+            </a>
+        </div>
+        <nav class="header-nav">
+            <a href="/dashboard" class="nav-link">На главную</a>
+            <a href="/logout" class="auth-btn">Выйти</a>
+        </nav>
+    </header>
+    <h1>Профиль игрока: {{ user.username }}</h1>
+    <p><strong>Стихия:</strong> {{ user.element }}{% if user.trained %} ✅ (усилена){% endif %}</p>
+    <p><strong>Статистика:</strong> Побед: {{ stats.wins if stats else 0 }}, Поражений: {{ stats.losses if stats else 0 }}</p>
+    <div style="display: flex; gap: 20px; flex-wrap: wrap; align-items: flex-start;">
+        <div>
+            <img class="profile-avatar" src="{{ url_for('static', filename='avatars/' + user.avatar) }}" alt="avatar">
+        </div>
+        <div>
+            {% if friend_status == 'accepted' %}
+                <a href="/friends/remove/{{ user.id }}" class="btn">❌ Удалить из друзей</a>
+            {% elif friend_status == 'pending' %}
+                {% if (friend_from_me)|default(false) %}
+                    <a href="/friends/cancel/{{ user.id }}" class="btn">❌ Отменить запрос</a>
+                {% else %}
+                    <a href="/friends/accept/{{ user.id }}" class="btn">✅ Принять запрос</a>
+                    <a href="/friends/reject/{{ user.id }}" class="btn">❌ Отклонить</a>
+                {% endif %}
+            {% else %}
+                <a href="/friends/add/{{ user.id }}" class="btn">➕ Добавить в друзья</a>
+            {% endif %}
+            <a href="/duel/challenge/{{ user.id }}" class="btn">⚔️ Вызвать на бой</a>
+        </div>
+    </div>
+    <h2>🏆 Витрина</h2>
+    <div class="showcase-container">
+        {% for slot in [1,2,3] %}
+            {% set card = showcase|selectattr('slot', 'equalto', slot)|first %}
+            <div class="showcase-slot">
+                <h3>Слот {{ slot }}</h3>
+                {% if card %}
+                    <img src="{{ url_for('static', filename='cards/' + card.name + '.jpeg') }}" alt="{{ card.name }}">
+                    <strong>{{ card.name }}</strong><br>
+                    <span>Редкость: {{ card.rarity }}</span>
+                {% else %}
+                    <div class="showcase-empty">(пусто)</div>
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+    <h2>Достижения</h2>
+    <ul>
+    {% for ach in achievements %}
+        <li><strong>{{ ach.name }}</strong> – {{ ach.description }} ({{ ach.unlocked_at[:10] }})</li>
+    {% else %}
+        <li>Нет достижений.</li>
+    {% endfor %}
+    </ul>
+</body>
+</html>

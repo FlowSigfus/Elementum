@@ -1,0 +1,57 @@
+{% extends 'base_private.html' %}
+{% block content %}
+
+<div style="max-width: 600px; margin: 0 auto; text-align: center;">
+    <h1>Приглашение в друзья</h1>
+    <p>Отправьте эту ссылку другу:</p>
+    <input type="text" value="{{ link }}" id="inviteLink" style="width:100%; padding:10px; margin-bottom: 15px;"
+        readonly>
+
+    <div style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-bottom: 20px;">
+        <button id="shareButton" class="btn" style="display:none;">📤 Поделиться ссылкой</button>
+        <button onclick="copyLink()" class="btn">📋 Скопировать ссылку</button>
+    </div>
+
+    <p>Или пусть друг отсканирует QR-код:</p>
+    <img id="qrImage" src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data={{ link | urlencode }}"
+        alt="QR-код приглашения" style="max-width: 200px; height: auto; margin-top: 10px;">
+    <p id="qrFallback" style="display:none;">QR-код не загрузился. Откройте ссылку вручную.</p>
+</div>
+
+<script>
+    // Показать кнопку "Поделиться", если поддерживается Web Share API
+    if (navigator.share) {
+        document.getElementById('shareButton').style.display = 'inline-block';
+        document.getElementById('shareButton').addEventListener('click', async () => {
+            try {
+                await navigator.share({
+                    title: 'Приглашение в игру Элементум',
+                    text: 'Присоединяйся ко мне в игре Элементум! Вот твоя персональная ссылка:',
+                    url: '{{ link }}'
+                });
+            } catch (err) {
+                console.log('Ошибка отправки:', err);
+            }
+        });
+    }
+
+    function copyLink() {
+        const linkInput = document.getElementById('inviteLink');
+        linkInput.select();
+        linkInput.setSelectionRange(0, 99999);
+        try {
+            document.execCommand('copy');
+            alert('Ссылка скопирована!');
+        } catch (err) {
+            alert('Не удалось скопировать. Выделите и скопируйте вручную.');
+        }
+    }
+
+    // Если QR-код не загрузился, покажем fallback
+    document.getElementById('qrImage').onerror = function () {
+        document.getElementById('qrImage').style.display = 'none';
+        document.getElementById('qrFallback').style.display = 'block';
+    };
+</script>
+
+{% endblock %}

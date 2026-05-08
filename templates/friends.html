@@ -1,0 +1,41 @@
+{% extends 'base_private.html' %}
+{% block content %}
+
+<div style="max-width: 600px; margin: 0 auto;">
+    <h1 style="text-align: center;">👥 Друзья</h1>
+
+    <h2>✅ Мои друзья</h2>
+    <ul>
+        {% for f in accepted %}
+        <li><a href="/profile/{{ f.id }}">{{ f.username }}</a> <a href="/friends/remove/{{ f.id }}"
+                class="btn">Удалить</a></li>
+        {% else %}
+        <li>Нет друзей</li>
+        {% endfor %}
+    </ul>
+
+    <h2>📩 Входящие заявки</h2>
+    <ul>
+        {% for f in incoming %}
+        <li>{{ f.username }} <a href="/friends/accept/{{ f.id }}" class="btn">Принять</a> <a
+                href="/friends/reject/{{ f.id }}" class="btn">Отклонить</a></li>
+        {% else %}
+        <li>Нет заявок</li>
+        {% endfor %}
+    </ul>
+
+    <h2>📤 Исходящие заявки</h2>
+    <ul>
+        {% for f in outgoing %}
+        <li>{{ f.username }} (ожидает)</li>
+        {% else %}
+        <li>Нет исходящих</li>
+        {% endfor %}
+    </ul>
+
+    <h2>🔗 Пригласить друга</h2>
+    <a href="/friends/invite/token" class="btn">Создать ссылку-приглашение</a>
+    <a href="/dashboard" class="btn">На главную</a>
+</div>
+
+{% endblock %}

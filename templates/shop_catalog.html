@@ -1,0 +1,29 @@
+{% extends 'base_game.html' %}
+{% block content %}
+<h1>🛒 Магазин</h1>
+<div class="shop-grid">
+    {% for product in products %}
+    <div class="shop-item">
+        <img src="{{ url_for('static', filename='images/' + product.image) }}" alt="{{ product.name }}">
+        <h3>{{ product.name }}</h3>
+        <p>{{ product.description }}</p>
+        <p>Цена: {{ product.price_cents // 100 }} руб.</p>
+        {% if not product.is_digital %}
+            <p>Осталось: {{ product.stock }} шт.</p>
+        {% endif %}
+        {% if product.stock > 0 or product.is_digital %}
+            <form action="{{ url_for('shop.add_to_cart') }}" method="post">
+                <input type="hidden" name="product_id" value="{{ product.id }}">
+                <input type="number" name="quantity" value="1" min="1" max="{{ product.stock if not product.is_digital else 99 }}">
+                <button type="submit" class="btn">В корзину</button>
+            </form>
+        {% else %}
+            <button disabled class="btn">Нет в наличии</button>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+<div style="text-align: center; margin-top: 20px;">
+    <a href="{{ url_for('shop.cart') }}" class="btn">Корзина</a>
+</div>
+{% endblock %}

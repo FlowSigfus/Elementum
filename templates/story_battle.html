@@ -1,0 +1,186 @@
+{% extends 'base_private.html' %}
+
+{% block content %}
+<div class="battle-wrapper">
+    <h2>{{ chapter_name }}</h2>
+    <p><em>{{ story_text }}</em></p>
+    <h1>⚔️ Сражение</h1>
+
+    <div class="battle-status">
+        <div class="battle-health-block">
+            <div class="enemy-name">👤 {{ battle.player.username }}</div>
+            <div class="health-bar-container">
+                <div class="health-bar-fill"
+                    style="width: {{ (battle.player.health / battle.player.max_health * 100) if battle.player.max_health else 100 }}%;">
+                </div>
+            </div>
+            <p>❤️ Здоровье: {{ battle.player.health }} | 🛡️ Щит: {{ battle.player_shield }}</p>
+        </div>
+        <div class="battle-health-block">
+            <div class="enemy-name">👹 {{ battle.enemy_name }}</div>
+            <div class="health-bar-container">
+                <div class="health-bar-fill"
+                    style="width: {{ (battle.enemy_health / battle.max_health * 100) if battle.max_health else 100 }}%;">
+                </div>
+            </div>
+            <p>❤️ Здоровье врага: {{ battle.enemy_health }} | 🛡️ Щит: {{ battle.enemy_shield }}</p>
+        </div>
+    </div>
+
+    {% if result_msg %}
+    <div class="flash-messages">
+        <li>{{ result_msg | safe }}</li>
+    </div>
+    {% endif %}
+
+    <form method="post">
+        <h3>🎴 Ваши карты</h3>
+        <div class="card-groups">
+            {% for type_name, type_label in [('attack', '⚔️ Атака'), ('defense', '🛡️ Защита'), ('heal', '💚 Лечение'),
+            ('skip', '⏭️ Пропуск')] %}
+            {% set cards = battle.grouped_cards.get(type_name, []) %}
+            {% if cards %}
+            <div class="card-group">
+                <!-- 👇 Добавлен type="button", чтобы кнопка НЕ отправляла форму -->
+                <button type="button" class="group-toggle" data-group="{{ type_name }}">▼ {{ type_label }}</button>
+                <div class="group-cards" id="group-{{ type_name }}">
+                    <div class="battle-cards-grid">
+                        {% for card in cards %}
+                        {% set remaining = battle.player_card_pool.get(card.id, 0) %}
+                        <button type="submit" name="card_id" value="{{ card.id }}" class="battle-card-btn" {% if
+                            remaining <=0 %}disabled{% endif %}>
+                            <img src="{{ url_for('static', filename='cards/' + card.name + '.jpeg') }}"
+                                alt="{{ card.name }}">
+                            <span>{{ card.name }}</span>
+                            <span>({{ card.action_type }})</span>
+                            <span>Осталось: {{ remaining }}</span>
+                        </button>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+    </form>
+
+    <div class="battle-actions-bar">
+        <button id="boostButton" type="button" class="btn">✨ NFC-усиление</button>
+        <form action="/story/battle/quit" method="post" style="display: inline;">
+            <button type="submit" class="btn">🚪 Выйти из боя</button>
+        </form>
+    </div>
+
+    <!-- Сворачиваемая история ходов -->
+    <div class="history-collapsible">
+        <button type="button" class="history-toggle btn" onclick="toggleHistory()">
+            <span id="toggleIcon">▼</span> История ходов
+        </button>
+        <div id="historyContent" class="battle-history" style="display: none;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Игрок</th>
+                        <th>Карта</th>
+                        <th>Стихия</th>
+                        <th>Урон</th>
+                        <th>Множитель</th>
+                        <th>Усиление</th>
+                        <th>Эффект</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for entry in battle.history %}
+                    <tr>
+                        <td>{{ entry.actor }}</td>
+                        <td>{{ entry.card_name }}</td>
+                        <td>{{ entry.element if entry.element else '-' }}</td>
+                        <td>{{ entry.damage if entry.damage else '-' }}</td>
+                        <td>{{ entry.multiplier if entry.multiplier else '-' }}</td>
+                        <td>{{ entry.player_mult if entry.player_mult else '-' }}</td>
+                        <td>{{ entry.effect if entry.effect else '-' }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    function toggleHistory() {
+        const content = document.getElementById('historyContent');
+        const icon = document.getElementById('toggleIcon');
+        if (content.style.display === 'none') {
+            content.style.display = 'block';
+            icon.textContent = '▲';
+        } else {
+            content.style.display = 'none';
+            icon.textContent = '▼';
+        }
+    }
+
+    document.querySelectorAll('.group-toggle').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const groupId = btn.getAttribute('data-group');
+            const content = document.getElementById('group-' + groupId);
+            if (content.style.display === 'none') {
+                content.style.display = 'block';
+                btn.innerHTML = '▼ ' + btn.innerText.slice(2);
+            } else {
+                content.style.display = 'none';
+                btn.innerHTML = '▶ ' + btn.innerText.slice(2);
+            }
+        });
+    });
+
+    // NFC скрипт
+    document.getElementById('boostButton').addEventListener('click', async () => {
+        if (!('NDEFReader' in window)) {
+            alert('Web NFC не поддерживается. Используйте Chrome на Android.');
+            return;
+        }
+        const boostButton = document.getElementById('boostButton');
+        boostButton.disabled = true;
+        boostButton.textContent = 'Сканирование...';
+        try {
+            const reader = new NDEFReader();
+            reader.onreading = async (event) => {
+                const tagId = event.serialNumber;
+                console.log('NFC tag detected:', tagId);
+                try {
+                    const response = await fetch('/api/nfc_boost', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ tag_id: tagId })
+                    });
+                    const data = await response.json();
+                    if (data.success) {
+                        alert(data.message);
+                        location.reload();
+                    } else {
+                        alert('Ошибка: ' + data.message);
+                    }
+                } catch (fetchError) {
+                    alert('Ошибка отправки данных: ' + fetchError.message);
+                } finally {
+                    reader.stop();
+                    boostButton.disabled = false;
+                    boostButton.textContent = '✨ NFC-усиление (раз в 3 дня)';
+                }
+            };
+            reader.onerror = (error) => {
+                console.error('NFC error:', error);
+                alert('Ошибка NFC: ' + error.message);
+                boostButton.disabled = false;
+                boostButton.textContent = '✨ NFC-усиление (раз в 3 дня)';
+            };
+            await reader.scan();
+        } catch (error) {
+            alert('Не удалось запустить сканер: ' + error.message);
+            boostButton.disabled = false;
+            boostButton.textContent = '✨ NFC-усиление (раз в 3 дня)';
+        }
+    });
+</script>
+{% endblock %}

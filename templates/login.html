@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Вход</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+    <header class="main-header">
+        <div class="header-profile">
+            <a href="/" class="profile-link">
+                <img class="header-avatar" src="{{ url_for('static', filename='avatars/default.png') }}" alt="logo">
+                <span class="header-username">Элементум</span>
+            </a>
+        </div>
+        <nav class="header-nav">
+            <a href="/register" class="nav-link">Регистрация</a>
+            <a href="/forgot" class="nav-link">Забыли пароль?</a>
+        </nav>
+    </header>
+
+    <div class="auth-form">
+        <h2>Вход</h2>
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <ul class="flash-messages">
+            {% for msg in messages %}
+            <li>{{ msg }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        {% endwith %}
+
+        {% if show_resend %}
+        <form action="/resend-verification" method="post" style="max-width: 400px; margin: 0 auto 15px;">
+            <input type="hidden" name="email" value="{{ email }}">
+            <button type="submit" class="btn">Отправить письмо повторно</button>
+        </form>
+        {% endif %}
+
+        <form id="loginForm" method="post">
+            <input type="text" name="username" placeholder="Имя или Email" required>
+            <input type="password" name="password" placeholder="Пароль" required>
+            <button type="submit" id="loginBtn" class="btn">Войти</button>
+        </form>
+        <p style="text-align: center;"><a href="/register">Регистрация</a> | <a href="/forgot">Забыли пароль?</a></p>
+    </div>
+</body>
+
+</html>

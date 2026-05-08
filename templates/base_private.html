@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>{% block title %}Элементум – игровая панель{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <header class="main-header">
+        <div class="header-profile">
+            <a href="/profile" class="profile-link">
+                <img class="header-avatar" src="{{ url_for('static', filename='avatars/' + current_user.avatar) }}" alt="avatar">
+                <span class="header-username">{{ current_user.username }}</span>
+            </a>
+        </div>
+        <nav class="header-nav">
+            <a href="/" class="auth-btn">Главная</a>
+            <a href="/logout" class="auth-btn">Выйти</a>
+        </nav>
+    </header>
+
+    <main class="game-container">
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <ul class="flash-messages">
+                {% for msg in messages %}
+                    <li>{{ msg }}</li>
+                {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+        {% block content %}{% endblock %}
+    </main>
+<!-- Модальное окно для карты -->
+<div id="cardModal" class="modal-overlay" style="display: none;" onclick="closeCardModal(event)">
+    <div class="modal-card-info" onclick="event.stopPropagation()">
+        <span class="close-btn" onclick="hideCardInfo()">&times;</span>
+        <h2 id="modalCardName"></h2>
+        <img id="modalCardImage" src="" alt="">
+        <p id="modalCardRarity"></p>
+        <p id="modalCardElement"></p>
+        <p id="modalCardType"></p>
+        <p id="modalCardValue"></p>
+        <p id="modalCardDesc"></p>
+    </div>
+</div>
+
+<script>
+function showCardInfo(cardData) {
+    document.getElementById('modalCardName').textContent = cardData.name;
+    document.getElementById('modalCardImage').src = cardData.image || '';
+    document.getElementById('modalCardRarity').textContent = 'Редкость: ' + cardData.rarity;
+    document.getElementById('modalCardElement').textContent = 'Стихия: ' + (cardData.element || '—');
+    document.getElementById('modalCardType').textContent = 'Тип: ' + cardData.actionType;
+    document.getElementById('modalCardValue').textContent = 'Сила: ' + cardData.value;
+    document.getElementById('modalCardDesc').textContent = cardData.description || '';
+    document.getElementById('cardModal').style.display = 'flex';
+}
+function hideCardInfo() {
+    document.getElementById('cardModal').style.display = 'none';
+}
+function closeCardModal(event) {
+    if (event.target === document.getElementById('cardModal')) {
+        hideCardInfo();
+    }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,40 @@
+{% extends 'base_game.html' %}
+{% block content %}
+<h1>🛒 Корзина</h1>
+{% if products %}
+<table>
+    <thead><tr><th>Товар</th><th>Цена</th><th>Кол-во</th><th>Сумма</th><th></th></tr></thead>
+    <tbody>
+    {% for item in products %}
+    <tr>
+        <td>{{ item.product.name }}</td>
+        <td>{{ item.product.price_cents // 100 }} руб.</td>
+        <td>
+            <form action="{{ url_for('shop.update_cart') }}" method="post" style="display: inline;">
+                <input type="hidden" name="product_id" value="{{ item.product.id }}">
+                <input type="number" name="quantity" value="{{ item.quantity }}" min="0" style="width: 70px;">
+                <button type="submit">Обновить</button>
+            </form>
+        </td>
+        <td>{{ item.item_total_cents // 100 }} руб.</td>
+        <td>
+            <form action="{{ url_for('shop.update_cart') }}" method="post" style="display: inline;">
+                <input type="hidden" name="product_id" value="{{ item.product.id }}">
+                <input type="hidden" name="quantity" value="0">
+                <button type="submit">Удалить</button>
+            </form>
+        </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+    <tfoot>
+        <tr><td colspan="3"><strong>Итого</strong></td><td><strong>{{ total_cents // 100 }} руб.</strong></td><td></td></tr>
+    </tfoot>
+</table>
+<a href="{{ url_for('shop.checkout') }}" class="btn">Оформить заказ</a>
+<a href="{{ url_for('shop.catalog') }}" class="btn">Продолжить покупки</a>
+{% else %}
+<p>Корзина пуста.</p>
+<a href="{{ url_for('shop.catalog') }}" class="btn">Вернуться в магазин</a>
+{% endif %}
+{% endblock %}

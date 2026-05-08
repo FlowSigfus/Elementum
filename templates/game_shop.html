@@ -1,0 +1,23 @@
+{% extends 'base_private.html' %}
+{% block content %}
+<div style="max-width: 1000px; margin: 0 auto; padding: 20px;">
+    <h1>🛒 Игровой магазин</h1>
+    <p>Ваши монеты: <strong>{{ user_coins }}</strong></p>
+    <div class="card-grid">
+        {% for card in cards %}
+        <div class="card-item">
+            <img class="card-img" src="{{ url_for('static', filename='cards/' + card.name + '.jpeg') }}"
+                alt="{{ card.name }}">
+            <div class="card-name">{{ card.name }}</div>
+            <div>Редкость: {{ card.rarity }}</div>
+            <div>Цена: {{ card.price }} монет</div>
+            <a href="{{ url_for('shop.buy_card', card_id=card.id) }}" class="btn">Купить</a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+<div style="text-align: center; margin-top: 30px;">
+    <a href="/dashboard" class="btn"><i class="fas fa-home"></i> На главную</a>
+    <a href="/inventory" class="btn"><i class="fas fa-user"></i> Инвентарь</a>
+</div>
+{% endblock %}

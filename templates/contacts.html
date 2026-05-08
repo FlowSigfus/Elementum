@@ -1,0 +1,19 @@
+{% extends 'base_game.html' %}
+
+{% block content %}
+<h1>📞 Контакты поддержки</h1>
+<div class="contacts">
+    <p><i class="fab fa-telegram"></i> Telegram: <strong>@elementum_support</strong> (напишите для связи)</p>
+    <p><i class="fas fa-envelope"></i> Email: <strong>support@elementum-game.ru</strong></p>
+    <p><i class="fas fa-comment"></i> Группа VK: <strong>vk.com/elementum</strong></p>
+    <hr>
+    <h3>Обратная связь</h3>
+    <form action="/contacts/send" method="post" style="max-width: 500px;">
+        <input type="text" name="name" placeholder="Ваше имя" required>
+        <input type="email" name="email" placeholder="Ваш email" required>
+        <textarea name="message" rows="5" placeholder="Сообщение" required></textarea>
+        <button type="submit" class="btn">Отправить</button>
+    </form>
+    <p class="small">Мы ответим в течение 24 часов.</p>
+</div>
+{% endblock %}

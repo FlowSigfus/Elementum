@@ -1,0 +1,23 @@
+{% extends 'base_private.html' %}
+{% block content %}
+<div style="max-width: 500px; margin: 0 auto; text-align: center;">
+    <h2>Смена стихии</h2>
+    <p>Текущая стихия: <strong>{{ current_user.element }}</strong></p>
+    <p>Стихию можно менять не чаще раза в месяц.</p>
+    <form method="post">
+        <select name="element">
+            <option value="fire" {% if current_user.element=='fire' %}selected{% endif %}>Огонь</option>
+            <option value="water" {% if current_user.element=='water' %}selected{% endif %}>Вода</option>
+            <option value="earth" {% if current_user.element=='earth' %}selected{% endif %}>Земля</option>
+            <option value="air" {% if current_user.element=='air' %}selected{% endif %}>Воздух</option>
+            <option value="light" {% if current_user.element=='light' %}selected{% endif %}>Свет</option>
+            <option value="dark" {% if current_user.element=='dark' %}selected{% endif %}>Тьма</option>
+        </select>
+        <button type="submit">Сменить</button>
+    </form>
+</div>
+<div style="text-align: center; margin-top: 30px;">
+    <a href="/dashboard" class="btn"><i class="fas fa-home"></i> На главную</a>
+    <a href="/profile" class="btn"><i class="fas fa-user"></i> Профиль</a>
+</div>
+{% endblock %}

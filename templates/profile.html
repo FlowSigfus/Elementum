@@ -1,0 +1,70 @@
+{% extends 'base_private.html' %}
+
+{% block content %}
+<h1>Профиль игрока: {{ current_user.username }}</h1>
+<p style="text-align: center;"><strong>Стихия:</strong> {{ current_user.element }}{% if current_user.trained %} ✅
+    (усилена){% endif %}</p>
+<p style="text-align: center;"><strong>Статистика:</strong> Побед: {{ stats.wins if stats else 0 }}, Поражений: {{
+    stats.losses if stats else 0 }}</p>
+
+<div style="display: flex; justify-content: space-between; gap: 40px; flex-wrap: wrap; align-items: flex-start;">
+    <div>
+        <h3>Аватар</h3>
+        <img class="profile-avatar" src="{{ url_for('static', filename='avatars/' + current_user.avatar) }}"
+            alt="avatar">
+        <form action="/upload_avatar" method="post" enctype="multipart/form-data">
+            <input type="file" name="avatar" accept="image/*" required>
+            <button type="submit">Загрузить аватар</button>
+        </form>
+    </div>
+    <div>
+        <h3>Изменить никнейм (раз в месяц)</h3>
+        <form action="/change_nickname" method="post">
+            <input type="text" name="nickname" placeholder="Новый никнейм" required>
+            <button type="submit">Сменить</button>
+        </form>
+        <a href="/toggle_duels" class="btn">🔘 {{ "Отключить" if current_user.allow_duels else "Включить" }} вызовы</a>
+    </div>
+</div>
+
+<h2>🏆 Витрина (любимые карты)</h2>
+<div class="showcase-container">
+    {% for slot in [1,2,3] %}
+    {% set card = showcase|selectattr('slot', 'equalto', slot)|first %}
+    <div class="showcase-slot">
+        <h3>Слот {{ slot }}</h3>
+        {% if card %}
+        <img src="{{ url_for('static', filename='cards/' + card.name + '.jpeg') }}" alt="{{ card.name }}">
+        <strong>{{ card.name }}</strong><br>
+        <span>Редкость: {{ card.rarity }}</span>
+        {% else %}
+        <div class="showcase-empty">(пусто)</div>
+        {% endif %}
+        <form action="/update_showcase" method="post">
+            <input type="hidden" name="slot" value="{{ slot }}">
+            <select name="card_id">
+                <option value="">-- выбрать --</option>
+                {% for c in user_cards %}
+                <option value="{{ c.id }}">{{ c.name }} ({{ c.rarity }})</option>
+                {% endfor %}
+            </select>
+            <button type="submit">Установить</button>
+        </form>
+    </div>
+    {% endfor %}
+</div>
+
+<h2>Достижения</h2>
+<ul>
+    {% for ach in achievements %}
+    <li><strong>{{ ach.name }}</strong> – {{ ach.description }} (получено: {{ ach.unlocked_at[:10] }})</li>
+    {% else %}
+    <li>Пока нет достижений. Сражайтесь и побеждайте!</li>
+    {% endfor %}
+</ul>
+
+<div style="text-align: center; margin-top: 30px;">
+    <a href="/dashboard" class="btn"><i class="fas fa-home"></i> На главную</a>
+    <a href="/inventory" class="btn"><i class="fas fa-user"></i> Инвентарь</a>
+</div>
+{% endblock %}

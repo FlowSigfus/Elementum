@@ -1,0 +1,94 @@
+{% extends 'base_private.html' %}
+
+{% block content %}
+<div class="dashboard-welcome">
+    <h1 class="welcome-main">🏰 Добро пожаловать</h1>
+    <p class="welcome-sub">в мир Элементум!</p>
+</div>
+
+<!-- Сюжет -->
+<div class="action-section">
+    <h2 class="section-title">📖 Сюжет</h2>
+    <div class="dashboard-group">
+        <a href="/story" class="action-card"
+            style="background-image: url('{{ url_for('static', filename='icons/story.jpeg') }}');">
+            <span class="title">Продолжить историю</span>
+        </a>
+        <form action="/reset_story" method="post" class="inline-form">
+            <button type="submit" class="action-card"
+                style="background-image: url('{{ url_for('static', filename='icons/reset.jpeg') }}');">
+                <span class="title">Сбросить сюжет</span>
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- PvP Арена -->
+<div class="action-section">
+    <h2 class="section-title">⚔️ PvP Арена</h2>
+    <div class="dashboard-group">
+        <a href="/pvp" class="action-card"
+            style="background-image: url('{{ url_for('static', filename='icons/pvp.jpeg') }}');">
+            <span class="title">Найти бой</span>
+        </a>
+        <a href="/pvp/leaderboard" class="action-card"
+            style="background-image: url('{{ url_for('static', filename='icons/leaderboard.jpeg') }}');">
+            <span class="title">Таблица лидеров</span>
+        </a>
+        <a href="/friends" class="action-card"
+            style="background-image: url('{{ url_for('static', filename='icons/friends.jpeg') }}');">
+            <span class="title">Друзья</span>
+        </a>
+    </div>
+</div>
+
+<!-- Коллекция -->
+<div class="action-section">
+    <h2 class="section-title">🎴 Коллекция</h2>
+    <div class="dashboard-group">
+        <a href="/daily_bonus" class="action-card"
+            style="background-image: url('{{ url_for('static', filename='icons/daily_bonus.jpeg') }}');">
+            <span class="title">Ежедневный бонус</span>
+        </a>
+        <a href="/inventory" class="action-card"
+            style="background-image: url('{{ url_for('static', filename='icons/inventory.jpeg') }}');">
+            <span class="title">Инвентарь</span>
+        </a>
+        <a href="/claim_case" class="action-card"
+            style="background-image: url('{{ url_for('static', filename='icons/daily_case.jpeg') }}');">
+            <span class="title">Ежедневный кейс</span>
+        </a>
+        <a href="/craft" class="action-card"
+            style="background-image: url('{{ url_for('static', filename='icons/craft.jpeg') }}');">
+            <span class="title">Крафт карт</span>
+        </a>
+        <a href="/trade" class="action-card"
+            style="background-image: url('{{ url_for('static', filename='icons/trade.jpeg') }}');">
+            <span class="title">Торговля</span>
+        </a>
+    </div>
+</div>
+
+<!-- Боевая подготовка -->
+<div class="action-section">
+    <h2 class="section-title">⚡ Боевая подготовка</h2>
+    <div class="dashboard-group">
+        <a href="/change_element" class="action-card"
+            style="background-image: url('{{ url_for('static', filename='icons/element_change.jpeg') }}');">
+            <span class="title">Сменить стихию</span>
+        </a>
+        <a href="/train_element" class="action-card"
+            style="background-image: url('{{ url_for('static', filename='icons/train.jpeg') }}');">
+            <span class="title">Обучить стихию</span>
+        </a>
+        <a href="/nfc" class="action-card"
+            style="background-image: url('{{ url_for('static', filename='icons/nfc.jpeg') }}');">
+            <span class="title">NFC-сканер</span>
+        </a>
+        <a href="/game-shop" class="action-card"
+            style="background-image: url('{{ url_for('static', filename='icons/game_shop.jpeg') }}');">
+            <span class="title">Игровой магазин</span>
+        </a>
+    </div>
+</div>
+{% endblock %}

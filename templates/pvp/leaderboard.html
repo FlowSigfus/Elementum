@@ -1,0 +1,47 @@
+{% extends 'base_private.html' %}
+{% block content %}
+<div style="text-align: center;">
+    <h1>🏆 Таблица лидеров</h1>
+    <button id="shareBtn" class="btn">📸 Поделиться скриншотом</button>
+</div>
+<table id="leaderboardTable">
+    <thead>
+        <tr>
+            <th>Место</th>
+            <th>Игрок</th>
+            <th>Рейтинг</th>
+            <th>Побед</th>
+            <th>Поражений</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for row in leaderboard %}
+        <tr>
+            <td>
+                {% if loop.index == 1 %}👑
+                {% elif loop.index <= 10 %}⭐ {% elif loop.index <=50 %}✨ {% endif %} {{ loop.index }} </td>
+            <td><a href="/profile/{{ row.user_id }}">{{ row.username }}</a></td>
+            <td>{{ row.rating }}</td>
+            <td>{{ row.wins }}</td>
+            <td>{{ row.losses }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<div style="text-align: center; margin-top: 30px;">
+    <a href="/dashboard" class="btn"><i class="fas fa-home"></i> На главную</a>
+    <a href="/inventory" class="btn"><i class="fas fa-user"></i> Инвентарь</a>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script>
+    document.getElementById('shareBtn').addEventListener('click', function () {
+        html2canvas(document.getElementById('leaderboardTable')).then(canvas => {
+            const link = document.createElement('a');
+            link.download = 'leaderboard.png';
+            link.href = canvas.toDataURL();
+            link.click();
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,75 @@
+{% extends 'base_private.html' %}
+{% block content %}
+<div class="text-center" style="text-align: center;">
+    <h1>⚔️ PvP Арена</h1>
+    <p>Ваш рейтинг: <strong>{{ rating }}</strong></p>
+    <button id="findBattleBtn" class="btn btn-large">Найти бой</button>
+    <div id="searchStatus" style="display: none; margin: 20px auto;">
+        <p>🔍 Поиск соперника...</p>
+        <div class="spinner"></div>
+    </div>
+</div>
+
+<h2>Таблица лидеров (топ-10)</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Игрок</th>
+            <th>Рейтинг</th>
+            <th>Побед</th>
+            <th>Поражений</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for row in leaderboard %}
+        <tr>
+            <td>{{ row.username }}</td>
+            <td>{{ row.rating }}</td>
+            <td>{{ row.wins }}</td>
+            <td>{{ row.losses }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<div style="text-align: center; margin-top: 30px;">
+    <a href="/dashboard" class="btn"><i class="fas fa-home"></i> На главную</a>
+    <a href="/inventory" class="btn"><i class="fas fa-user"></i> Инвентарь</a>
+</div>
+<script>
+    let interval;
+    function startPolling() {
+        interval = setInterval(() => {
+            fetch('/pvp/status')
+                .then(r => r.json())
+                .then(data => {
+                    if (data.status === 'found') {
+                        clearInterval(interval);
+                        window.location.href = '/pvp/match/' + data.match_id;
+                    }
+                });
+        }, 3000);
+    }
+    document.getElementById('findBattleBtn').addEventListener('click', function () {
+        fetch('/pvp/queue', { method: 'POST' })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('searchStatus').style.display = 'block';
+                    startPolling();
+                } else {
+                    alert(data.message);
+                }
+            });
+    });
+    fetch('/pvp/status')
+        .then(r => r.json())
+        .then(data => {
+            if (data.status === 'waiting') {
+                document.getElementById('searchStatus').style.display = 'block';
+                startPolling();
+            } else if (data.status === 'found') {
+                window.location.href = '/pvp/match/' + data.match_id;
+            }
+        });
+</script>
+{% endblock %}

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Завершение регистрации</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header class="main-header">
+        <div class="header-profile">
+            <a href="/" class="profile-link">
+                <img class="header-avatar" src="{{ url_for('static', filename='avatars/default.png') }}" alt="logo">
+                <span class="header-username">Элементум</span>
+            </a>
+        </div>
+        <nav class="header-nav">
+            <a href="/login" class="nav-link">Войти</a>
+        </nav>
+    </header>
+
+    <div class="auth-form">
+        <h2>Завершение регистрации</h2>
+        <p>Email подтверждён: <strong>{{ email }}</strong></p>
+        <form method="post">
+            <input type="text" name="username" placeholder="Придумайте имя" required>
+            <input type="password" name="password" placeholder="Пароль" required>
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input" id="agreePrivacy" name="agree_privacy" required>
+                <label class="form-check-label" for="agreePrivacy">
+                    Я принимаю <a href="/privacy" target="_blank">политику конфиденциальности</a>
+                </label>
+            </div>
+            <button type="submit">Зарегистрироваться</button>
+        </form>
+    </div>
+</body>
+</html>

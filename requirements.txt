@@ -1,0 +1,6 @@
+Flask>=2.3.0
+Flask-Mail
+Flask-Compress
+python-dotenv
+Werkzeug>=2.3.7
+yookassa

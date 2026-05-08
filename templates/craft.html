@@ -1,0 +1,88 @@
+{% extends 'base_private.html' %}
+
+{% block content %}
+<h1>🔨 Крафт карт</h1>
+<p style="text-align: center;">Выберите ровно 3 карты одной редкости, чтобы получить одну карту более высокой редкости.
+    Можно брать одинаковые.</p>
+
+<form id="craft-form" class="craft-form" action="/craft/do" method="post">
+    <div class="card-grid">
+        {% for card in user_cards %}
+        <div class="card-item craft-selectable">
+            <img class="card-img" src="{{ url_for('static', filename='cards/' + card.name + '.jpeg') }}"
+                alt="{{ card.name }}">
+            <div class="card-name">{{ card.name }}</div>
+            <div class="card-details">{{ card.rarity }} | В наличии: {{ card.quantity }}</div>
+            <div class="craft-qty">
+                <label>Взять:
+                    <input type="number" name="qty_{{ card.id }}" min="0" max="3" value="0" class="craft-qty-input"
+                        data-available="{{ card.quantity }}">
+                </label>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <!-- Блок со счётчиком и кнопкой — всегда на виду -->
+    <div class="craft-controls">
+        <p>Выбрано: <span id="selected-count">0</span> / 3</p>
+        <button type="submit" form="craft-form" class="btn" id="craft-btn" disabled>Скрафтить</button>
+    </div>
+</form>
+
+<div style="text-align: center; margin-top: 30px;">
+    <a href="/dashboard" class="btn"><i class="fas fa-home"></i> На главную</a>
+    <a href="/profile" class="btn"><i class="fas fa-user"></i> Профиль</a>
+</div>
+
+<script>
+    (function () {
+        const inputs = document.querySelectorAll('.craft-qty-input');
+        const countSpan = document.getElementById('selected-count');
+        const craftBtn = document.getElementById('craft-btn');
+
+        function updateTotal() {
+            let total = 0;
+            inputs.forEach(inp => {
+                const val = parseInt(inp.value) || 0;
+                total += val;
+                // Соблюдаем доступное количество
+                const available = parseInt(inp.dataset.available) || 0;
+                if (val > available) {
+                    inp.value = available;
+                    total = total - val + available;
+                }
+            });
+            countSpan.textContent = total;
+            craftBtn.disabled = (total !== 3);
+            if (total > 3) {
+                countSpan.style.color = '#ff6666';
+                craftBtn.disabled = true;
+            } else {
+                countSpan.style.color = '#f3e9c0';
+            }
+        }
+
+        inputs.forEach(inp => {
+            inp.addEventListener('input', function () {
+                const available = parseInt(this.dataset.available) || 0;
+                let val = parseInt(this.value) || 0;
+                if (val > available) {
+                    this.value = available;
+                    val = available;
+                }
+                let otherSum = 0;
+                inputs.forEach(el => {
+                    if (el !== this) otherSum += parseInt(el.value) || 0;
+                });
+                const total = otherSum + val;
+                if (total > 3) {
+                    this.value = Math.max(0, 3 - otherSum);
+                }
+                updateTotal();
+            });
+        });
+
+        updateTotal();
+    })();
+</script>
+{% endblock %}

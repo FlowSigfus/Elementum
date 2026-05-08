@@ -1,0 +1,15 @@
+{% extends 'base_private.html' %}
+
+{% block content %}
+<div class="story-container">
+    <h1>🏆 Победа!</h1>
+    <div class="victory-message">
+        {{ text }}
+    </div>
+    <div class="victory-actions">
+        <form action="/next_battle" method="post">
+            <button type="submit" class="btn">➡️ Далее</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

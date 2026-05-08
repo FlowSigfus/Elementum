@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Регистрация</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+    <header class="main-header">
+        <div class="header-profile">
+            <a href="/" class="profile-link">
+                <img class="header-avatar" src="{{ url_for('static', filename='avatars/default.png') }}" alt="logo">
+                <span class="header-username">Элементум</span>
+            </a>
+        </div>
+        <nav class="header-nav">
+            <a href="/login" class="nav-link">Войти</a>
+        </nav>
+    </header>
+
+    <div class="auth-form">
+        <h2>Регистрация</h2>
+        <p>Введите ваш email, на него будет отправлена ссылка для подтверждения.</p>
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <ul class="flash-messages">
+            {% for msg in messages %}
+            <li>{{ msg }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        {% endwith %}
+        <form method="post">
+            <input type="email" name="email" placeholder="Email" required>
+            <button type="submit">Отправить ссылку</button>
+        </form>
+        {% if resend_available %}
+        <form action="/resend-verification" method="post" style="margin-top: 10px;">
+            <input type="hidden" name="email" value="{{ email }}">
+            <button type="submit" class="btn">Отправить повторно</button>
+        </form>
+        {% endif %}
+        <p style="text-align: center;"><a href="/login">Уже есть аккаунт? Войти</a></p>
+    </div>
+</body>
+
+</html>

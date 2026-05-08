@@ -1,0 +1,24 @@
+{% extends 'base_private.html' %}
+{% block content %}
+<div style="max-width: 500px; margin: 0 auto; text-align: center;">
+    <h2>⚡ Обучение стихии</h2>
+    <p>Ваша стихия: <strong>{{ current_user.element }}</strong></p>
+    <p>Обучение увеличит урон от ваших атак на <strong>20%</strong> навсегда.</p>
+    <p>Стоимость: <strong>100 монет</strong>.
+    {% if coins >= 100 %}
+        У вас <strong>{{ coins }}</strong> монет.
+    {% else %}
+        <span style="color: #ff6666;">Недостаточно монет (у вас {{ coins }}).</span>
+    {% endif %}
+    </p>
+    <form method="post">
+        <button type="submit" class="btn" {% if coins < 100 %}disabled{% endif %}>
+            💰 Обучить за 100 монет
+        </button>
+    </form>
+    <div style="text-align: center; margin-top: 30px;">
+        <a href="/dashboard" class="btn"><i class="fas fa-home"></i> На главную</a>
+        <a href="/profile" class="btn"><i class="fas fa-user"></i> Профиль</a>
+    </div>
+</div>
+{% endblock %}

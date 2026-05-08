@@ -1,0 +1,8 @@
+{% extends 'base_game.html' %}
+{% block content %}
+<h1>Оплата прошла успешно!</h1>
+<p>Заказ №{{ order.id }} оплачен.</p>
+{% if order.delivery_method != 'pickup' %} Информация о доставке будет отправлена на {{ order.email }}.{% endif %}
+<p>Спасибо за покупку!</p>
+<a href="/" class="btn">На главную</a>
+{% endblock %}
