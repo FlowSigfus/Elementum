@@ -97,7 +97,9 @@ game/
 ├── static/               # CSS, JS, аватарки, изображения карт, иконки
 └── game.db               # База данных (создаётся автоматически)
 ```
-Подробное описание архитектуры находится в [DETAILED_ARCHITECTURE.md].
+
+Подробное описание архитектуры находится в [DETAILED_ARCHITECTURE.md](./DETAILED_ARCHITECTURE.md).
+
 ---
 
 ## 📡 NFC-механика
