@@ -85,7 +85,7 @@
             style="background-image: url('{{ url_for('static', filename='icons/nfc.jpeg') }}');">
             <span class="title">NFC-сканер</span>
         </a>
-        <a href="/game-shop" class="action-card"
+        <a href="{{ url_for('shop.game_shop') }}" class="action-card"
             style="background-image: url('{{ url_for('static', filename='icons/game_shop.jpeg') }}');">
             <span class="title">Игровой магазин</span>
         </a>
