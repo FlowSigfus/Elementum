@@ -10,12 +10,12 @@ from flask_mail import Message
 auth_bp = Blueprint('auth', __name__)
 
 def send_async_email(app, msg):
-""" Отправка письма в отдельном фоновом потоке"""
+    """ Отправка письма в отдельном фоновом потоке"""
     with app.app_context():
         mail.send(msg)
 
 def send_verification_email(email, token):
-""" Формирует и отправляет письмо для подтверждения регистрации нового пользователя"""
+    """ Формирует и отправляет письмо для подтверждения регистрации нового пользователя"""
     from flask import current_app
     link = url_for('auth.verify_email', token=token, _external=True)
     msg = Message('Подтверждение регистрации', recipients=[email])
@@ -24,7 +24,7 @@ def send_verification_email(email, token):
     thread.start()
 
 def send_reset_email(user_email, token):
-""" Отправляет письмо для восстановления пароля"""
+    """ Отправляет письмо для восстановления пароля"""
     from flask import current_app
     link = url_for('auth.reset_password', token=token, _external=True)
     msg = Message('Восстановление пароля', recipients=[user_email])
@@ -34,7 +34,7 @@ def send_reset_email(user_email, token):
 
 @auth_bp.route('/register', methods=['GET', 'POST'])
 def register():
-""" Получение и нормализация email, Проверка существующего пользователя в таблице users, Проверка наличия неподтверждённой регистрации, Создание временной записи и токена, Отправка письма, Сообщение об успехе и перенаправление"""
+    """ Получение и нормализация email, Проверка существующего пользователя в таблице users, Проверка наличия неподтверждённой регистрации, Создание временной записи и токена, Отправка письма, Сообщение об успехе и перенаправление"""
     if request.method == 'POST':
         email = request.form['email'].strip().lower()
         if not email:
@@ -61,8 +61,8 @@ def register():
 
 @auth_bp.route('/resend-verification', methods=['POST'])
 def resend_verification():
-""" Повторную отправка письма подтверждения для тех, кто не получил первое письмо или потерял ссылку.
-Проверяет наличие записи в таблице pending_registrations с таким email. Генерирует новый токен. Отправляет новое письмо подтверждения через send_verification_email"""
+    """ Повторную отправка письма подтверждения для тех, кто не получил первое письмо или потерял ссылку.
+    Проверяет наличие записи в таблице pending_registrations с таким email. Генерирует новый токен. Отправляет новое письмо подтверждения через send_verification_email"""
     email = request.form.get('email', '').strip().lower()
     if not email:
         flash('Email не указан')
@@ -82,7 +82,7 @@ def resend_verification():
 
 @auth_bp.route('/verify/<token>')
 def verify_email(token):
-""" Подтверждения email при регистрации"""
+    """ Подтверждения email при регистрации"""
     with db.get_db() as conn:
         pending = conn.execute('SELECT * FROM pending_registrations WHERE verification_token = ?', (token,)).fetchone()
         if not pending:
@@ -97,7 +97,7 @@ def verify_email(token):
 
 @auth_bp.route('/complete-registration', methods=['GET', 'POST'])
 def complete_registration():
-""" Завершает регистрацию пользователя после подтверждения email"""
+    """ Завершает регистрацию пользователя после подтверждения email"""
     email = session.get('verified_email')
     if not email:
         flash('Email не подтверждён. Начните регистрацию заново.')

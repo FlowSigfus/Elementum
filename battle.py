@@ -33,7 +33,7 @@ class Battle:
         self.enemy = type('Enemy', (), {'username': 'Противник'})()   # простой объект с атрибутом username = "Противник", чтобы имитировать структуру игрока
     @logger
     def apply_player_card(self, card_id):
-    """Проверка возможности хода, Определение типа карты и выполнение действия, ереключение хода и ход врага"""
+        """Проверка возможности хода, Определение типа карты и выполнение действия, ереключение хода и ход врага"""
         if self.turn != 'player':
             return "Сейчас не ваш ход!"
         if self.player_card_pool.get(card_id, 0) <= 0:
@@ -101,7 +101,7 @@ class Battle:
         return msg + "<br>" + enemy_msg
     @logger
     def enemy_turn(self):
-    """ Проверка пропуска хода врага, «Умный» выбор карты, Применение выбранной карты, Переключение хода и возврат результата"""
+        """ Проверка пропуска хода врага, «Умный» выбор карты, Применение выбранной карты, Переключение хода и возврат результата"""
         if self.enemy_skip:
             self.enemy_skip = False
             self.turn = 'player'
@@ -173,7 +173,7 @@ class Battle:
         return msg
     @logger
     def apply_boost(self, card):
-    """ Проверка возможности усиления, Усиление в зависимости от типа карты, """
+        """ Проверка возможности усиления, Усиление в зависимости от типа карты, """
         if self.boost_used:
             return False, "Усиление уже использовано в этом бою"
         if self.turn != 'player':
@@ -232,7 +232,7 @@ class Battle:
 
     # Вспомогательные методы
     def damage_enemy(self, amount):
-    """ Наносит урон врагу с учётом его текущего щита"""
+        """ Наносит урон врагу с учётом его текущего щита"""
         actual_damage = amount
         if self.enemy_shield > 0:
             blocked = min(self.enemy_shield, amount)
@@ -278,7 +278,7 @@ class PVPBattle:
         self.winner = None
 
     def apply_card(self, player_id, card_id):
-    """ Проверка состояния боя, Определение текущего игрока и противника, Обработка пропуска хода, Проверка наличия карты, Применение эффекта карты в зависимости от action_type, Переключение хода"""
+        """ Проверка состояния боя, Определение текущего игрока и противника, Обработка пропуска хода, Проверка наличия карты, Применение эффекта карты в зависимости от action_type, Переключение хода"""
         if self.winner:
             return False, "Бой уже закончен"
         if player_id != self.turn:
@@ -387,7 +387,7 @@ class PVPBattle:
         return True, msg
 
     def _damage_player(self, player_id, amount):
-    """ Наносит урон одному из двух игроков в PvP-бою, учитывая его текущий щит"""
+        """ Наносит урон одному из двух игроков в PvP-бою, учитывая его текущий щит"""
         if player_id == self.player1.id:
             if self.player1_shield > 0:
                 blocked = min(self.player1_shield, amount)

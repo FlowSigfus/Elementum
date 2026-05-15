@@ -42,7 +42,9 @@
     <div>
         <h3>🎴 Ваши карты</h3>
         <div class="battle-cards-grid">
-            {% for card_id, quantity in battle.player_card_pool.items() if quantity > 0 %}
+            {# Выбираем правильный пул карт для текущего игрока #}
+            {% set my_card_pool = battle.player1_card_pool if is_player1 else battle.player2_card_pool %}
+            {% for card_id, quantity in my_card_pool.items() if quantity > 0 %}
             {% set card = get_card_by_id(card_id) %}
             <button class="battle-card-btn" data-card-id="{{ card_id }}">
                 <img src="{{ url_for('static', filename='cards/' + card.name + '.jpeg') }}" alt="{{ card.name }}">

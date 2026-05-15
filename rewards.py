@@ -7,7 +7,7 @@ def get_today_str():
 
 @positive_args
 def claim_daily_case(user_id, manual_override=False):
-"""Проверка возможности получения кейса сегодня, Увеличение стрика, Выбор редкости карт в зависимости от стрика, Выдача до 10 уникальных карт"""
+    """Проверка возможности получения кейса сегодня, Увеличение стрика, Выбор редкости карт в зависимости от стрика, Выдача до 10 уникальных карт"""
     with get_db() as conn:
         row = conn.execute('SELECT last_claim_date, streak FROM daily_cases WHERE user_id = ?', (user_id,)).fetchone()
         today = get_today_str()
@@ -61,7 +61,7 @@ def claim_daily_case(user_id, manual_override=False):
             return None, None, "Не удалось выдать карты"
 
 def check_and_award_quests(user_id, action_type, value=1):
-""" Отслеживает выполнение ежедневных квестов игроком и автоматически выдаёт награды при достижении нужного прогресса"""
+    """ Отслеживает выполнение ежедневных квестов игроком и автоматически выдаёт награды при достижении нужного прогресса"""
     today = get_today_str()
     with get_db() as conn:
         quests = conn.execute('''
@@ -90,10 +90,10 @@ def check_and_award_quests(user_id, action_type, value=1):
         conn.commit()
 
 def check_achievements(user_id, action_type, value=1, recursive=True):
-""" Проверка и выдача достижений игроку.
- Получает список уже полученных игроком достижений из таблицы user_achievements, Ищет новые достижения в таблице achievements, имеющее тот же requirement_type. 
- Для каждого подходящего достижения - проверяет родительское достижение (parent_achievement). Если оно есть, но игрок его ещё не получил — ачивка не выдаётся (нужна иерархия)
- Если recursive == True, вызывает саму себя с теми же параметрами, но recursive=False. Это нужно, чтобы после выдачи одной ачивки сразу проверить, не выполнилось ли следующее достижение (например, цепочка: 10 побед → 50 побед → 100 побед). Рекурсия ограничена одним уровнем, чтобы избежать бесконечного цикла."""
+    """ Проверка и выдача достижений игроку.
+    Получает список уже полученных игроком достижений из таблицы user_achievements, Ищет новые достижения в таблице achievements, имеющее тот же requirement_type.
+    Для каждого подходящего достижения - проверяет родительское достижение (parent_achievement). Если оно есть, но игрок его ещё не получил — ачивка не выдаётся (нужна иерархия)
+    Если recursive == True, вызывает саму себя с теми же параметрами, но recursive=False. Это нужно, чтобы после выдачи одной ачивки сразу проверить, не выполнилось ли следующее достижение (например, цепочка: 10 побед → 50 побед → 100 побед). Рекурсия ограничена одним уровнем, чтобы избежать бесконечного цикла."""
     with get_db() as conn:
         achieved_ids = [row['achievement_id'] for row in conn.execute('SELECT achievement_id FROM user_achievements WHERE user_id = ?', (user_id,))]
         placeholders = ','.join('?' for _ in achieved_ids) if achieved_ids else '0'
@@ -124,7 +124,7 @@ def check_achievements(user_id, action_type, value=1, recursive=True):
         return awarded
 
 def claim_daily_bonus(user_id):
-""" Ежедневный бонус для игрока — выдаёт случайную обычную карту (5-10 копий) и монеты"""
+    """ Ежедневный бонус для игрока — выдаёт случайную обычную карту (5-10 копий) и монеты"""
     today = get_today_str()
     with get_db() as conn:   
         row = conn.execute('SELECT last_daily_bonus FROM users WHERE id = ?', (user_id,)).fetchone()
