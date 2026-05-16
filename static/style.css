@@ -822,7 +822,10 @@ margin: 5px;
 .shop-item img {
     width: 120px;
     height: auto;
-    margin-bottom: 10px;
+    max-height: 150px;
+    object-fit: contain;
+    border: none;
+    background: none;
 }
 
 .form-check {

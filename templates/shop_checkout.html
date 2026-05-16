@@ -18,11 +18,17 @@
     <div id="address_field"><label>Адрес доставки:</label><textarea name="delivery_address" rows="3"></textarea></div>
     {% endif %}
 
-    <div>
-        <label><input type="checkbox" name="agree_offer" required> Я принимаю условия <a href="/offer" target="_blank">оферты</a></label>
+    <div style="text-align: left; margin-bottom: 10px;">
+        <label style="display: inline-flex; align-items: center; gap: 8px;">
+            <input type="checkbox" name="agree_offer" required style="margin: 0;">
+            Я принимаю условия <a href="/offer" target="_blank">оферты</a>
+        </label>
     </div>
-    <div>
-        <label><input type="checkbox" name="agree_privacy" required> Согласен с <a href="/privacy" target="_blank">политикой конфиденциальности</a></label>
+    <div style="text-align: left; margin-bottom: 10px;">
+        <label style="display: inline-flex; align-items: center; gap: 8px;">
+            <input type="checkbox" name="agree_privacy" required style="margin: 0;">
+            Согласен с <a href="/privacy" target="_blank">политикой конфиденциальности</a>
+        </label>
     </div>
     <button type="submit" class="btn">Перейти к оплате</button>
 </form>

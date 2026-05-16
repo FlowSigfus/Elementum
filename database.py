@@ -285,7 +285,7 @@ def init_db():
         # ------------------ Магазин: заказы ------------------
         conn.execute('''
             CREATE TABLE IF NOT EXISTS shop_orders (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                id TEXT PRIMARY KEY,
                 user_id INTEGER,
                 fullname TEXT NOT NULL,
                 email TEXT NOT NULL,
