@@ -7,3 +7,4 @@ static/avatars/*
 !static/avatars/default.png
 *.pem
 clo
+deploy.sh
